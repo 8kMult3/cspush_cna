@@ -44,7 +44,7 @@ on beacon_initial {
 	$hostname = beacon_info($bid, "computer");
 	$user = beacon_info($bid, "user");
 	#whitelist, if you don't need this, please delete the lines 44-47 and the if-else structure.
-	$wl = @("SystemSettings.exe");
+	$wl = @("test.exe");
 	$process = beacon_info($bid, "process");
 	if($process in $wl){
 		$msg ="computer: ". $hostname. "\n". "external_ip:". $external_ip. "\n". "internal_ip:". $internal_ip. "\n". "user:". $user;
